@@ -1,0 +1,60 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>File System Examples</title>
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+  <py-env>
+      - pandas
+  </py-env>
+  </head>
+  <body>
+    <p>Bienvenue dans le comparateur de fichiers bancaires</p>
+    <br />
+    <label for="src_file">Choissisez un fichier source:</label>
+    <input type="file" id="src_file" name="src_file">
+    <br />
+    <label for="dst_file">Choissisez un fichier destination:</label>
+    <input type="file" id="dst_file" name="dst_file">
+    <br />
+    <br />
+    <div id="print_output"></div>
+    <br />
+      <p>Contenu du fichier:</p>
+      <div style="border:2px inset #AAA;cursor:text;height:120px;overflow:auto;width:600px; resize:both">
+        <div id="content">
+        </div>
+    </div>
+ 
+    <py-script output="print_output">
+import asyncio
+import pandas as pd
+from js import document, FileReader
+from pyodide import create_proxy
+ 
+async def process_file(event):
+    fileList = event.target.files.to_py()
+
+    data = await fileList[0].text()
+    document.getElementById("content").innerHTML = str(data)
+ 
+    # for f in fileList:
+    #     data = await f.text()
+    #     document.getElementById("content").innerHTML = str(data)
+ 
+def main():
+    # Create a Python proxy for the callback function
+    # process_file() is your function to process events from FileReader
+    file_event = create_proxy(process_file)
+ 
+    # Set the listener to the callback
+    e = document.getElementById("src_file")
+    e.addEventListener("change", file_event, False)
+ 
+main()
+</py-script>
+ 
+</body>
+</html>
